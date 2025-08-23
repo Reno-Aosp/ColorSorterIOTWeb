@@ -1,11 +1,10 @@
 package iotweb.demo.Service;
 
 
-import iotweb.demo.colorsorter.dto.DetectionEventDTO;
-import iotweb.demo.colorsorter.model.DetectionEvent;
+import iotweb.demo.DTO.DetectionEvent;
+import iotweb.demo.Model.DetectionEventModel;
 import iotweb.demo.Repository.DetectionEventRepository;
 
-import iotweb.demo.Model.DetectionEventModel;
 
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
@@ -23,10 +22,12 @@ private final DetectionEventModel repo;
 private final List<SseEmitter> emitters = new CopyOnWriteArrayList<>();
 
 
-public EventService(DetectionEventModel repo) { this.repo = repo; }
+public EventService(DetectionEventModel repo) {
+     this.repo = repo;
+     }
 
 
-public DetectionEvent save(DetectionEventDTO dto) {
+public DetectionEvent save(DetectionEvent dto) {
 var e = new DetectionEvent();
 e.setTs(dto.ts != null ? Instant.parse(dto.ts) : Instant.now());
 e.setDeviceId(dto.deviceId);
@@ -50,9 +51,13 @@ return emitter;
 
 
 private void broadcast(DetectionEvent e) {
-for (var em : emitters) {
-try { em.send(SseEmitter.event().name("event").data(e)); }
-catch (IOException ex) { em.complete(); emitters.remove(em); }
-}
+    for (var em : emitters) {
+        try {
+            em.send(SseEmitter.event().name("event").data(e));
+        } catch (IOException ex) {
+            em.complete();
+            emitters.remove(em);
+        }
+    }
 }
 }

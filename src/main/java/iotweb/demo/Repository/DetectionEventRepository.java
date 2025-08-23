@@ -1,8 +1,8 @@
 package iotweb.demo.Repository;
 
 
-import com.example.colorsorter.model.DetectionEvent;
-import com.example.colorsorter.repo.projections.ColorCount;
+import iotweb.demo.Model.DetectionEventModel;
+import iotweb.demo.Repository.ColorCountRepository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import java.util.List;
