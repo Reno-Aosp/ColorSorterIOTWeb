@@ -1,18 +1,11 @@
 package iotweb.demo.Service;
 
 
-<<<<<<< HEAD
-import iotweb.demo.DTO.DetectionEvent;
+
+import iotweb.demo.DTO.DetectionEventDTO;
 import iotweb.demo.Model.DetectionEventModel;
 import iotweb.demo.Repository.DetectionEventRepository;
 
-=======
-import iotweb.demo.colorsorter.dto.DetectionEventDTO;
-import iotweb.demo.colorsorter.model.DetectionEvent;
-import iotweb.demo.Repository.DetectionEventRepository;
-
-import iotweb.demo.Model.DetectionEventModel;
->>>>>>> 3145818c0dec9fd022290da99166db45e992e709
 
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
@@ -26,24 +19,19 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 @Service
 public class EventService {
-private final DetectionEventModel repo;
+private final DetectionEventRepository repo;
 private final List<SseEmitter> emitters = new CopyOnWriteArrayList<>();
 
 
-<<<<<<< HEAD
-public EventService(DetectionEventModel repo) {
+
+public EventService(DetectionEventRepository repo) {
      this.repo = repo;
      }
 
 
-public DetectionEvent save(DetectionEvent dto) {
-=======
-public EventService(DetectionEventModel repo) { this.repo = repo; }
+public DetectionEventModel save(DetectionEventDTO dto) {
 
-
-public DetectionEvent save(DetectionEventDTO dto) {
->>>>>>> 3145818c0dec9fd022290da99166db45e992e709
-var e = new DetectionEvent();
+var e = new DetectionEventModel();
 e.setTs(dto.ts != null ? Instant.parse(dto.ts) : Instant.now());
 e.setDeviceId(dto.deviceId);
 e.setColorName(dto.colorName);
@@ -65,8 +53,8 @@ return emitter;
 }
 
 
-private void broadcast(DetectionEvent e) {
-<<<<<<< HEAD
+private void broadcast(DetectionEventModel e) {
+
     for (var em : emitters) {
         try {
             em.send(SseEmitter.event().name("event").data(e));
@@ -75,11 +63,5 @@ private void broadcast(DetectionEvent e) {
             emitters.remove(em);
         }
     }
-=======
-for (var em : emitters) {
-try { em.send(SseEmitter.event().name("event").data(e)); }
-catch (IOException ex) { em.complete(); emitters.remove(em); }
-}
->>>>>>> 3145818c0dec9fd022290da99166db45e992e709
 }
 }
