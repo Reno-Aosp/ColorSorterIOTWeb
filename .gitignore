@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 
 # Compiled class file
 *.class
@@ -24,6 +25,8 @@
 hs_err_pid*
 replay_pid*
 =======
+=======
+>>>>>>> 3145818c0dec9fd022290da99166db45e992e709
 HELP.md
 target/
 .mvn/wrapper/maven-wrapper.jar
@@ -57,4 +60,7 @@ build/
 
 ### VS Code ###
 .vscode/
+<<<<<<< HEAD
 >>>>>>> d30ca82 (Commit)
+=======
+>>>>>>> 3145818c0dec9fd022290da99166db45e992e709

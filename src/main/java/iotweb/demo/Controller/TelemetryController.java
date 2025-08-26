@@ -1,12 +1,22 @@
 package iotweb.demo.Controller;
 
 
+<<<<<<< HEAD
 import iotweb.demo.DTO.DetectionEvent;
 import iotweb.demo.Model.DetectionEventModel;
 import iotweb.demo.Repository.DetectionEventRepository;
 import iotweb.demo.Repository.ColorCountRepository;
 import iotweb.demo.Service.EventService;
 
+=======
+import com.example.colorsorter.dto.DetectionEventDTO;
+import com.example.colorsorter.model.DetectionEvent;
+import com.example.colorsorter.repo.DetectionEventRepository;
+import com.example.colorsorter.repo.projections.ColorCount;
+import com.example.colorsorter.service.EventService;
+
+import iotweb.demo.Model.DetectionEventModel;
+>>>>>>> 3145818c0dec9fd022290da99166db45e992e709
 import jakarta.validation.Valid;
 
 import org.hibernate.event.spi.EventSource;
