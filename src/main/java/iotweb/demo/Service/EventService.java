@@ -2,7 +2,7 @@ package iotweb.demo.Service;
 
 
 
-import iotweb.demo.DTO.DetectionEventDTO;
+import iotweb.demo.DTO.DetectionEvent;
 import iotweb.demo.Model.DetectionEventModel;
 import iotweb.demo.Repository.DetectionEventRepository;
 
@@ -29,7 +29,7 @@ public EventService(DetectionEventRepository repo) {
      }
 
 
-public DetectionEventModel save(DetectionEventDTO dto) {
+public DetectionEventModel save(DetectionEvent dto) {
 
 var e = new DetectionEventModel();
 e.setTs(dto.ts != null ? Instant.parse(dto.ts) : Instant.now());

@@ -1,0 +1,32 @@
+{"properties": [
+  {
+    "name": "spring.mvc.cors.mappings[0].allowed-headers",
+    "type": "java.lang.String",
+    "description": "A description for 'spring.mvc.cors.mappings[0].allowed-headers'"
+  },
+  {
+    "name": "spring.mvc.cors.mappings[0].allowed-methods",
+    "type": "java.lang.String",
+    "description": "A description for 'spring.mvc.cors.mappings[0].allowed-methods'"
+  },
+  {
+    "name": "spring.mvc.cors.mappings[0].allowed-origins",
+    "type": "java.lang.String",
+    "description": "A description for 'spring.mvc.cors.mappings[0].allowed-origins'"
+  },
+  {
+    "name": "spring.mvc.cors.mappings[0].path-pattern",
+    "type": "java.lang.String",
+    "description": "A description for 'spring.mvc.cors.mappings[0].path-pattern'"
+  },
+  {
+    "name": "spring.mvc.cors.mappings[0].allowed-headers",
+    "type": "java.lang.String",
+    "description": "A description for 'spring.mvc.cors.mappings[0].allowed-headers'"
+  },
+  {
+    "name": "spring.mvc.cors.mappings[0].path-pattern",
+    "type": "java.lang.String",
+    "description": "A description for 'spring.mvc.cors.mappings[0].path-pattern'"
+  }
+]}
