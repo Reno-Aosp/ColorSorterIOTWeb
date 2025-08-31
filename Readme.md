@@ -176,25 +176,6 @@ mvn clean install spring-boot:run
 - **React Query** - Data fetching
 - **Server-Sent Events** - Real-time updates
 
-## Project Structure
-
-```
-IOTWeb/demo/
-├── src/main/java/iotweb/demo/
-│   ├── Controller/          # REST controllers
-│   ├── Service/            # Business logic
-│   ├── Repository/         # Data access
-│   ├── DTO/               # Data transfer objects
-│   └── Model/             # Entity models
-├── src/main/resources/
-│   ├── application.properties
-│   └── static/FrontEnd/
-│       ├── sourcecode/    # React components
-│       ├── package.json
-│       └── index.html
-└── pom.xml               # Maven configuration
-```
-
 ## Troubleshooting
 
 ### Common Issues
@@ -244,7 +225,7 @@ ren tailwindconfig.js tailwind.config.js
 
 ## License
 
-This project is licensed under the GNU
+This project is licensed under the GPL 3.0 License
 
 ---
 
