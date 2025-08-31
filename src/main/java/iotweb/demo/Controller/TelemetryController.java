@@ -37,4 +37,9 @@ public class TelemetryController {
     public List<ColorCount> byColor() {
         return repo.countByColor();
     }
+
+    @GetMapping("/events")
+    public String eventsInfo() {
+        return "This is a POST endpoint. Send JSON data to submit detection events.";
+    }
 }

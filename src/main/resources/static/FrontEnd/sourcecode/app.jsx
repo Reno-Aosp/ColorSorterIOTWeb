@@ -4,7 +4,7 @@ import useSSE from './hooks/useSSE';
 import ColorSummary from './components/ColorSummary';
 import PieChart from './components/PieChart';
 import LatestTable from './components/LatestTable';
-import './styles.css';
+import './style.css';
 
 
 const qc = new QueryClient();
