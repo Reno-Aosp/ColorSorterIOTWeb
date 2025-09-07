@@ -12,6 +12,10 @@ import org.springframework.web.bind.annotation.*;
 import iotweb.demo.DTO.ColorCount;
 import java.util.List;
 
+/**
+ * Main API controller for IoT telemetry data.
+ * Handles color detection events and statistics.
+ */
 @RestController
 @RequestMapping("/api")
 public class TelemetryController {
@@ -23,21 +27,25 @@ public class TelemetryController {
         this.repo = repo;
     }
 
+    // POST endpoint for IoT devices to send color detection data
     @PostMapping("/events")
     public ResponseEntity<DetectionEventModel> ingest(@Valid @RequestBody DetectionEvent dto) {
         return ResponseEntity.ok(service.save(dto));
     }
 
+    // GET latest 20 detection events
     @GetMapping("/events/latest")
     public List<DetectionEventModel> latest() {
         return repo.findTop20ByOrderByTsDesc();
     }
 
+    // GET color statistics
     @GetMapping("/stats/colors")
     public List<ColorCount> byColor() {
         return repo.countByColor();
     }
 
+    // GET info about the POST endpoint
     @GetMapping("/events")
     public String eventsInfo() {
         return "This is a POST endpoint. Send JSON data to submit detection events.";

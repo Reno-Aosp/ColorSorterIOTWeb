@@ -16,20 +16,24 @@ import java.time.Instant;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-
+/**
+ * Service for handling color detection events.
+ * Manages event persistence and real-time broadcasting.
+ */
 @Service
 public class EventService {
-private final DetectionEventRepository repo;
-private final List<SseEmitter> emitters = new CopyOnWriteArrayList<>();
+    private final DetectionEventRepository repo;
+    private final List<SseEmitter> emitters = new CopyOnWriteArrayList<>();
 
 
 
-public EventService(DetectionEventRepository repo) {
-     this.repo = repo;
+    public EventService(DetectionEventRepository repo) {
+         this.repo = repo;
      }
 
 
-public DetectionEventModel save(DetectionEvent dto) {
+    // Save detection event and broadcast to connected clients
+    public DetectionEventModel save(DetectionEvent dto) {
 
 var e = new DetectionEventModel();
 e.setTs(dto.ts != null ? Instant.parse(dto.ts) : Instant.now());
@@ -44,7 +48,8 @@ return saved;
 }
 
 
-public SseEmitter registerEmitter() {
+    // Register new SSE emitter for real-time updates
+    public SseEmitter registerEmitter() {
 SseEmitter emitter = new SseEmitter(0L); // no timeout
 emitters.add(emitter);
 emitter.onCompletion(() -> emitters.remove(emitter));
@@ -53,6 +58,7 @@ return emitter;
 }
 
 
+    // Broadcast event to all connected SSE clients
 private void broadcast(DetectionEventModel e) {
 
     for (var em : emitters) {

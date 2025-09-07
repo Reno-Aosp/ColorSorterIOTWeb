@@ -1,43 +1,77 @@
 package iotweb.demo.Model;
 
-
 import jakarta.persistence.*;
 import java.time.Instant;
 
-
+/**
+ * Model for color detection events.
+ * Database entity for storing detection data.
+ */
 @Entity
 public class DetectionEventModel {
-@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-private Long id;
-
-
-private Instant ts; // event timestamp UTC
-private String deviceId; // e.g., sorter-01
-private String colorName; // e.g., RED/GREEN/BLUE/YELLOW
-private Integer r;
-private Integer g;
-private Integer b;
-private Double confidence; // 0..1
-private String binId; // which chute/bin used
-
-
-// getters/setters
-public Long getId() { return id; }
-public void setId(Long id) { this.id = id; }
-public Instant getTs() { return ts; }
-public void setTs(Instant ts) { this.ts = ts; }
-public String getDeviceId() { return deviceId; }
-public void setDeviceId(String deviceId) { this.deviceId = deviceId; }
-public String getColorName() { return colorName; }
-public void setColorName(String colorName) { this.colorName = colorName; }
-public Integer getR() { return r; }
-public void setR(Integer r) { this.r = r; }
-public Integer getG() { return g; }
-public void setG(Integer g) { this.g = g; }
-public Integer getB() { return b; }
-public void setB(Integer b) { this.b = b; }
-public Double getConfidence() { return confidence; }
-public void setConfidence(Double confidence) { this.confidence = confidence; }
-public String getBinId() { return binId; }
-public void setBinId(String binId) { this.binId = binId; }
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;  // Primary key
+    
+    private Instant ts; // Event timestamp UTC
+    private String deviceId; // IoT device identifier
+    private String colorName; // Detected color name
+    private Integer r; // Red color value (0-255)
+    private Integer g; // Green color value (0-255)
+    private Integer b; // Blue color value (0-255)
+    private Double confidence; // Detection confidence (0.0-1.0)
+    private String binId; // Bin/chute identifier
+    
+    // Get primary key
+    public Long getId() { return id; }
+    
+    // Set primary key
+    public void setId(Long id) { this.id = id; }
+    
+    // Get event timestamp
+    public Instant getTs() { return ts; }
+    
+    // Set event timestamp
+    public void setTs(Instant ts) { this.ts = ts; }
+    
+    // Get device identifier
+    public String getDeviceId() { return deviceId; }
+    
+    // Set device identifier
+    public void setDeviceId(String deviceId) { this.deviceId = deviceId; }
+    
+    // Get detected color name
+    public String getColorName() { return colorName; }
+    
+    // Set detected color name
+    public void setColorName(String colorName) { this.colorName = colorName; }
+    
+    // Get red color value
+    public Integer getR() { return r; }
+    
+    // Set red color value
+    public void setR(Integer r) { this.r = r; }
+    
+    // Get green color value
+    public Integer getG() { return g; }
+    
+    // Set green color value
+    public void setG(Integer g) { this.g = g; }
+    
+    // Get blue color value
+    public Integer getB() { return b; }
+    
+    // Set blue color value
+    public void setB(Integer b) { this.b = b; }
+    
+    // Get detection confidence
+    public Double getConfidence() { return confidence; }
+    
+    // Set detection confidence
+    public void setConfidence(Double confidence) { this.confidence = confidence; }
+    
+    // Get bin identifier
+    public String getBinId() { return binId; }
+    
+    // Set bin identifier
+    public void setBinId(String binId) { this.binId = binId; }
 }
