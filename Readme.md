@@ -10,6 +10,8 @@ A complete real-time IoT color detection and sorting system with Spring Boot bac
 - 🌈 **Color Analytics** - Pie charts, statistics, and trend analysis
 - 📱 **IoT Integration** - RESTful API for any IoT device
 - 💾 **Data Persistence** - H2 database with JPA/Hibernate
+- 🗑️ **Data Management** - Clear history functionality
+- 🔌 **Universal IoT Support** - Arduino, Raspberry Pi, Python, Mobile apps
 
 ## 🚀 Quick Start
 
@@ -73,7 +75,8 @@ React Dashboard ← SSE Stream ← Color Analytics
 | `/api/events/latest` | GET | Latest 20 detections | ✅ Working |
 | `/api/stats/colors` | GET | Color statistics | ✅ Working |
 | `/api/events/stream` | GET | Real-time SSE stream | ✅ Working |
-| `/actuator/health` | GET | Health monitoring | ✅ Working |
+| `/api/events/clear` | DELETE | **Clear all color history** | ✅ Working |
+| `/api/health` | GET | Health monitoring | ✅ Working |
 
 ## 🤖 IoT Device Integration
 
@@ -121,6 +124,12 @@ Invoke-RestMethod -Uri "http://localhost:1000/api/events" -Method POST -ContentT
 Invoke-RestMethod -Uri "http://localhost:1000/api/events" -Method POST -ContentType "application/json" -Body '{"deviceId":"sensor-03","colorName":"orange","r":255,"g":165,"b":0,"confidence":0.87,"binId":"orange-bin"}'
 ```
 
+**🗑️ Clear History Test**:
+```powershell
+# Clear all color history
+Invoke-RestMethod -Uri "http://localhost:1000/api/events/clear" -Method DELETE
+```
+
 **🤖 Automated Sensor Simulator**:
 ```powershell
 # Simulate real IoT sensors
@@ -158,38 +167,74 @@ for ($i = 1; $i -le 20; $i++) {
 
 ## 🔌 Real IoT Device Examples
 
-### Arduino/ESP32
+### Arduino/ESP32 (Main Endpoint for Arduino Users)
+**Endpoint**: `POST http://YOUR_IP_ADDRESS:1000/api/events`
+
 ```cpp
 #include <WiFi.h>
 #include <HTTPClient.h>
-#include <ArduinoJson.h>
+
+// WiFi credentials
+const char* ssid = "YOUR_WIFI_NAME";
+const char* password = "YOUR_WIFI_PASSWORD";
+
+// Your dashboard endpoint (replace with your IP)
+const char* serverURL = "http://192.168.1.100:1000/api/events";
+
+void setup() {
+    Serial.begin(115200);
+    
+    // Connect to WiFi
+    WiFi.begin(ssid, password);
+    while (WiFi.status() != WL_CONNECTED) {
+        delay(1000);
+        Serial.println("Connecting to WiFi...");
+    }
+    Serial.println("✅ Connected to WiFi!");
+}
+
+void loop() {
+    // Read your color sensor here
+    String detectedColor = "red";  // Replace with actual sensor reading
+    int r = 255, g = 0, b = 0;     // Replace with actual RGB values
+    float confidence = 0.95;       // Replace with actual confidence
+    
+    // Send to dashboard
+    sendColorDetection(detectedColor, r, g, b, confidence);
+    
+    delay(3000); // Wait 3 seconds
+}
 
 void sendColorDetection(String color, int r, int g, int b, float confidence) {
-    HTTPClient http;
-    http.begin("http://your-server:1000/api/events");
-    http.addHeader("Content-Type", "application/json");
-    
-    StaticJsonDocument<200> doc;
-    doc["deviceId"] = "esp32-sensor-01";
-    doc["colorName"] = color;
-    doc["r"] = r;
-    doc["g"] = g;
-    doc["b"] = b;
-    doc["confidence"] = confidence;
-    doc["binId"] = color + "-bin";
-    
-    String jsonString;
-    serializeJson(doc, jsonString);
-    
-    int httpResponseCode = http.POST(jsonString);
-    
-    if (httpResponseCode > 0) {
-        Serial.println("✅ Color sent: " + color);
+    if (WiFi.status() == WL_CONNECTED) {
+        HTTPClient http;
+        http.begin(serverURL);
+        http.addHeader("Content-Type", "application/json");
+        
+        // Create JSON payload
+        String json = "{";
+        json += "\"deviceId\":\"Arduino-Sensor-01\",";
+        json += "\"colorName\":\"" + color + "\",";
+        json += "\"r\":" + String(r) + ",";
+        json += "\"g\":" + String(g) + ",";
+        json += "\"b\":" + String(b) + ",";
+        json += "\"confidence\":" + String(confidence) + ",";
+        json += "\"binId\":\"" + color + "-bin\"";
+        json += "}";
+        
+        // Send POST request
+        int httpCode = http.POST(json);
+        
+        if (httpCode == 200) {
+            Serial.println("✅ Color sent: " + color);
+        } else {
+            Serial.println("❌ Failed to send color. Code: " + String(httpCode));
+        }
+        
+        http.end();
     } else {
-        Serial.println("❌ Error sending data");
+        Serial.println("❌ WiFi disconnected!");
     }
-    
-    http.end();
 }
 ```
 
@@ -243,6 +288,7 @@ while True:
 - **🥧 Interactive Pie Chart** - Visual color distribution
 - **📋 Latest Detections Table** - Recent sensor data with timestamps
 - **🔄 Auto-refresh** - Updates every 5 seconds via SSE
+- **🗑️ Clear History Button** - Remove all data with one click
 
 ### 🎨 Supported Colors
 The dashboard recognizes and color-codes:
@@ -264,6 +310,7 @@ The dashboard recognizes and color-codes:
 ```properties
 # application.properties
 server.port=1000
+server.address=0.0.0.0  # Allow external IoT devices
 spring.datasource.url=jdbc:h2:mem:testdb
 spring.h2.console.enabled=true
 spring.jpa.hibernate.ddl-auto=create-drop
@@ -290,7 +337,7 @@ public DetectionEventModel() {}
 **Frontend CORS Error**:
 ```bash
 # Check API URL in client.js
-const API = 'http://localhost:1000';  // ✅ Correct port
+const API = 'http://localhost:1000';  # ✅ Correct port
 ```
 
 **Pie Chart Not Showing**:
@@ -305,11 +352,18 @@ curl http://localhost:1000/api/stats/colors
 # Add test data after each restart
 ```
 
+**Arduino Can't Connect**:
+```bash
+# Check your IP address
+ipconfig | findstr "IPv4"
+# Update Arduino code with correct IP
+```
+
 ## 🎯 Testing Endpoints
 
 ### Health Check
 ```bash
-curl http://localhost:1000/actuator/health
+curl http://localhost:1000/api/health
 ```
 
 ### View All Data
@@ -320,6 +374,11 @@ curl http://localhost:1000/api/events/latest
 ### Color Statistics
 ```bash
 curl http://localhost:1000/api/stats/colors
+```
+
+### Clear History
+```bash
+curl -X DELETE http://localhost:1000/api/events/clear
 ```
 
 ## 📂 Project Structure
@@ -351,6 +410,7 @@ When everything is working, you should see:
 - ✅ Dashboard shows "Color Sorter Dashboard" title
 - ✅ Pie chart displays after adding test data
 - ✅ Table updates with new color detections
+- ✅ Clear button works perfectly
 - ✅ No console errors
 - ✅ Real-time updates every 5 seconds
 
@@ -379,3 +439,4 @@ This project is licensed under the GPL 3.0 License
 
 **Dashboard URL**: http://localhost:5173
 **API Base URL**: http://localhost:1000
+**Arduino Endpoint**: `POST http://YOUR_IP:1000/api/events`
