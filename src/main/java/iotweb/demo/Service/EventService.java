@@ -1,15 +1,11 @@
 package iotweb.demo.Service;
 
-
-
 import iotweb.demo.DTO.DetectionEvent;
 import iotweb.demo.Model.DetectionEventModel;
 import iotweb.demo.Repository.DetectionEventRepository;
 
-
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
-
 
 import java.io.IOException;
 import java.time.Instant;

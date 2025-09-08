@@ -1,67 +1,112 @@
-import * as echarts from 'echarts';
 import { useEffect, useRef } from 'react';
+import * as echarts from 'echarts';
 
-
-export default function PieChart({ stats }){
-const ref = useRef(null);
-useEffect(() => {
-if(!ref.current) return;
-const chart = echarts.init(ref.current);
-const data = (stats||[]).map(s => ({ name: s.colorName, value: s.count }));
-chart.setOption({
-tooltip: { trigger: 'item' },
-series: [{ type: 'pie', radius: '65%', data }]
-});
-const resize = () => chart.resize();
-window.addEventListener('resize', resize);
-return () => { window.removeEventListener('resize', resize); chart.dispose(); };
-}, [stats]);
-useEffect(() => {
-if (ref.current && stats?.length > 0) {
-setTimeout(() => {
-const chart = echarts.init(ref.current);
-chart.setOption({
-tooltip: { trigger: 'item' },
-series: [{ type: 'pie', radius: '65%', data }]
-});
-
-const handleResize = () => chart.resize();
-window.addEventListener('resize', handleResize);
-
-return () => {
-window.removeEventListener('resize', handleResize);
-chart.dispose();
-};
-}, 100);
-}
-}, [stats]);
-useEffect(() => {
-  console.log('PieChart stats data:', stats); // Add this debug line
+// Add the missing getColorHex function
+const getColorHex = (colorName) => {
+  const colorMap = {
+    red: '#FF0000',
+    blue: '#0000FF', 
+    green: '#00FF00',
+    yellow: '#FFFF00',
+    purple: '#800080',
+    orange: '#FFA500',
+    pink: '#FFC0CB',
+    brown: '#A52A2A',
+    black: '#000000',
+    white: '#FFFFFF',
+    gray: '#808080',
+    grey: '#808080'
+  };
   
-  if (ref.current && stats?.length > 0) {
-    const chart = echarts.init(ref.current);
-    
-    const data = stats.map(stat => ({
-      value: stat.count,
-      name: stat.colorName,
-      itemStyle: { color: getColorHex(stat.colorName) }
-    }));
-    
-    console.log('Chart data:', data); // Add this debug line too
-    
-    chart.setOption({
-      tooltip: { trigger: 'item' },
-      series: [{ type: 'pie', radius: '65%', data }]
-    });
+  return colorMap[colorName?.toLowerCase()] || '#CCCCCC';
+};
 
-    const handleResize = () => chart.resize();
-    window.addEventListener('resize', handleResize);
+export default function PieChart({ stats }) {
+  const chartRef = useRef(null);
+  const chartInstance = useRef(null); // Track chart instance
 
+  useEffect(() => {
+    console.log('PieChart stats data:', stats);
+    
+    if (chartRef.current && stats?.length > 0) {
+      // Dispose existing chart instance if it exists
+      if (chartInstance.current) {
+        chartInstance.current.dispose();
+        chartInstance.current = null;
+      }
+
+      // Create new chart instance
+      chartInstance.current = echarts.init(chartRef.current);
+      
+      const data = stats.map(stat => ({
+        value: stat.count,
+        name: stat.colorName,
+        itemStyle: { 
+          color: getColorHex(stat.colorName) 
+        }
+      }));
+      
+      console.log('Chart data:', data);
+      
+      const option = {
+        title: {
+          text: 'Color Distribution',
+          left: 'center'
+        },
+        tooltip: {
+          trigger: 'item',
+          formatter: '{a} <br/>{b}: {c} ({d}%)'
+        },
+        legend: {
+          orient: 'vertical',
+          left: 'left'
+        },
+        series: [
+          {
+            name: 'Colors',
+            type: 'pie',
+            radius: '50%',
+            data: data,
+            emphasis: {
+              itemStyle: {
+                shadowBlur: 10,
+                shadowOffsetX: 0,
+                shadowColor: 'rgba(0, 0, 0, 0.5)'
+              }
+            }
+          }
+        ]
+      };
+
+      chartInstance.current.setOption(option);
+      
+      // Handle window resize
+      const handleResize = () => {
+        if (chartInstance.current) {
+          chartInstance.current.resize();
+        }
+      };
+      
+      window.addEventListener('resize', handleResize);
+      
+      return () => {
+        window.removeEventListener('resize', handleResize);
+      };
+    }
+  }, [stats]);
+
+  // Cleanup on unmount
+  useEffect(() => {
     return () => {
-      window.removeEventListener('resize', handleResize);
-      chart.dispose();
+      if (chartInstance.current) {
+        chartInstance.current.dispose();
+      }
     };
-  }
-}, [stats]);
-return <div ref={ref} style={{height: 300}} className="bg-white rounded-2xl shadow"/>;
+  }, []);
+
+  return (
+    <div className="bg-white p-4 rounded-lg shadow">
+      <div ref={chartRef} style={{ width: '100%', height: '400px' }} />
+    </div>
+  );
 }

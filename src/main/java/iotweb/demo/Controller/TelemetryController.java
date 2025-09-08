@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import iotweb.demo.DTO.ColorCount;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.time.Instant;
 
 /**
  * Main API controller for IoT telemetry data.
@@ -30,8 +31,20 @@ public class TelemetryController {
 
     // POST endpoint for IoT devices to send color detection data
     @PostMapping("/events")
-    public ResponseEntity<DetectionEventModel> ingest(@Valid @RequestBody DetectionEvent dto) {
-        return ResponseEntity.ok(service.save(dto));
+    public ResponseEntity<DetectionEventModel> ingest(@RequestBody DetectionEventModel event) {
+        try {
+            // Set timestamp if not provided
+            if (event.getTs() == null) {
+                event.setTs(Instant.now());
+            }
+            
+            DetectionEventModel saved = repo.save(event);
+            return ResponseEntity.ok(saved);
+        } catch (Exception e) {
+            System.err.println("Error saving event: " + e.getMessage());
+            e.printStackTrace();
+            return ResponseEntity.status(500).build();
+        }
     }
 
     // GET latest 20 detection events

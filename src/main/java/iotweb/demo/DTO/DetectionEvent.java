@@ -1,43 +1,40 @@
 package iotweb.demo.DTO;
 
-import jakarta.persistence.*;
-import jakarta.validation.constraints.*;
-
-/**
- * Entity for color detection events.
- * Represents IoT device color detection data.
- */
-@Entity
 public class DetectionEvent {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;  // Primary key
+    public String deviceId;
+    public String colorName;
+    public Integer r;
+    public Integer g;
+    public Integer b;
+    public Double confidence;
+    public String binId;
+    public String ts;  // Optional timestamp
     
-    @NotBlank 
-    public String deviceId;  // IoT device identifier
+    // Default constructor
+    public DetectionEvent() {}
     
-    @NotBlank 
-    public String colorName;  // Detected color name
+    // Getters and setters
+    public String getDeviceId() { return deviceId; }
+    public void setDeviceId(String deviceId) { this.deviceId = deviceId; }
     
-    @Min(0) @Max(255) 
-    public Integer r;  // Red color value (0-255)
+    public String getColorName() { return colorName; }
+    public void setColorName(String colorName) { this.colorName = colorName; }
     
-    @Min(0) @Max(255) 
-    public Integer g;  // Green color value (0-255)
+    public Integer getR() { return r; }
+    public void setR(Integer r) { this.r = r; }
     
-    @Min(0) @Max(255) 
-    public Integer b;  // Blue color value (0-255)
+    public Integer getG() { return g; }
+    public void setG(Integer g) { this.g = g; }
     
-    @DecimalMin("0.0") @DecimalMax("1.0") 
-    public Double confidence;  // Detection confidence (0.0-1.0)
+    public Integer getB() { return b; }
+    public void setB(Integer b) { this.b = b; }
     
-    public String binId;  // Bin identifier
+    public Double getConfidence() { return confidence; }
+    public void setConfidence(Double confidence) { this.confidence = confidence; }
     
-    public String ts; // Timestamp (ISO string from device; if null, server uses now)
+    public String getBinId() { return binId; }
+    public void setBinId(String binId) { this.binId = binId; }
     
-    // Get primary key
-    public Long getId() { return id; }
-    
-    // Set primary key
-    public void setId(Long id) { this.id = id; }
+    public String getTs() { return ts; }
+    public void setTs(String ts) { this.ts = ts; }
 }

@@ -21,6 +21,20 @@ public class DetectionEventModel {
     private Double confidence; // Detection confidence (0.0-1.0)
     private String binId; // Bin/chute identifier
     
+    // DEFAULT CONSTRUCTOR (REQUIRED for JPA)
+    public DetectionEventModel() {}
+
+    // Optional: Constructor with parameters
+    public DetectionEventModel(String deviceId, String colorName, Integer r, Integer g, Integer b, Double confidence) {
+        this.deviceId = deviceId;
+        this.colorName = colorName;
+        this.r = r;
+        this.g = g;
+        this.b = b;
+        this.confidence = confidence;
+        this.ts = Instant.now();
+    }
+    
     // Get primary key
     public Long getId() { return id; }
     
