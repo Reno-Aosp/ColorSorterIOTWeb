@@ -1,11 +1,8 @@
 package iotweb.demo.Controller;
 
-import iotweb.demo.DTO.DetectionEvent;
 import iotweb.demo.Model.DetectionEventModel;
 import iotweb.demo.Repository.DetectionEventRepository;
 import iotweb.demo.Service.EventService;
-
-import jakarta.validation.Valid;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,11 +18,9 @@ import java.time.Instant;
 @RestController
 @RequestMapping("/api")
 public class TelemetryController {
-    private final EventService service;
     private final DetectionEventRepository repo;
 
     public TelemetryController(EventService service, DetectionEventRepository repo) {
-        this.service = service; 
         this.repo = repo;
     }
 
