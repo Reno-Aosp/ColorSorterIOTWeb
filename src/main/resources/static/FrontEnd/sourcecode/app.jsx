@@ -1,5 +1,5 @@
 import { useQuery, QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { apiGet } from './api/client';
+import { apiGet, sseUrl } from './api/client'; // Import sseUrl
 import useSSE from './hooks/useSSE';
 import ColorSummary from './components/ColorSummary';
 import PieChart from './components/PieChart';
@@ -15,7 +15,7 @@ const { data: stats, refetch: refetchStats } = useQuery({ queryKey:['stats'], qu
 const { data: latest, refetch: refetchLatest } = useQuery({ queryKey:['latest'], queryFn:()=>apiGet('/api/events/latest'), refetchInterval:5000 });
 
 
-useSSE(import.meta.env.VITE_SSE_URL || 'http://localhost:8000/api/events/stream', () => {
+useSSE(import.meta.env.VITE_SSE_URL || sseUrl, () => {
 // when a new event arrives, refresh stats & latest
 refetchStats();
 refetchLatest();

@@ -15,7 +15,7 @@ public interface DetectionEventRepository extends JpaRepository<DetectionEventMo
     // Get latest 20 events ordered by timestamp descending
     List<DetectionEventModel> findTop20ByOrderByTsDesc();
     
-    // Custom query to count detections by color
-    @Query("select e.colorName as colorName, count(e) as count from DetectionEvent e group by e.colorName")
+    // Use native SQL query to be 100% sure
+    @Query(value = "SELECT color_name as colorName, COUNT(*) as count FROM detection_event_model GROUP BY color_name", nativeQuery = true)
     List<ColorCount> countByColor();
 }

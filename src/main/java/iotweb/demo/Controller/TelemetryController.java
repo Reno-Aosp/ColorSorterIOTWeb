@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import iotweb.demo.DTO.ColorCount;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Main API controller for IoT telemetry data.
@@ -49,5 +50,26 @@ public class TelemetryController {
     @GetMapping("/events")
     public String eventsInfo() {
         return "This is a POST endpoint. Send JSON data to submit detection events.";
+    }
+
+    // Debug endpoint to count all detection events
+    @GetMapping("/debug/count")
+    public long getEventCount() {
+        return repo.count();
+    }
+
+    // Debug endpoint to retrieve all detection events
+    @GetMapping("/debug/all")
+    public List<DetectionEventModel> getAllEvents() {
+        return repo.findAll();
+    }
+
+    // Debug endpoint to get raw color data from all events
+    @GetMapping("/debug/colors-raw")
+    @ResponseBody
+    public List<String> getColorsRaw() {
+        return repo.findAll().stream()
+            .map(e -> "Color: " + e.getColorName() + ", Device: " + e.getDeviceId())
+            .collect(Collectors.toList());
     }
 }
