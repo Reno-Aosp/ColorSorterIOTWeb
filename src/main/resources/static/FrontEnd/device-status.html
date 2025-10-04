@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Device Status - IoT Color Sorting System</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <h1 class="nav-logo">🌈 Color Sorter IoT</h1>
+            <div class="nav-menu">
+                <a href="index.html" class="nav-link">Dashboard</a>
+                <a href="about.html" class="nav-link">About</a>
+                <a href="device-status.html" class="nav-link active">Device Status</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <!-- Device Overview -->
+        <div class="device-overview">
+            <h2>📱 Device Status Overview</h2>
+            <div class="device-grid">
+                <div class="device-card" id="mainDevice">
+                    <div class="device-header">
+                        <h3>ESP32 Color Sensor</h3>
+                        <div class="device-status online" id="deviceStatus">
+                            <span class="status-dot"></span>
+                            <span id="statusText">Online</span>
+                        </div>
+                    </div>
+                    <div class="device-details">
+                        <p><strong>Device ID:</strong> <span id="deviceId">ESP-ColorSensor-Enhanced</span></p>
+                        <p><strong>IP Address:</strong> <span id="deviceIP">192.168.151.4</span></p>
+                        <p><strong>Last Seen:</strong> <span id="lastSeen">--</span></p>
+                        <p><strong>Uptime:</strong> <span id="deviceUptime">--</span></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- System Metrics -->
+        <div class="metrics-section">
+            <h3>📊 System Metrics</h3>
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <div class="metric-icon">🔋</div>
+                    <div class="metric-info">
+                        <h4>Voltage</h4>
+                        <div class="metric-value" id="voltageMetric">3.3V</div>
+                        <div class="metric-status normal" id="voltageStatus">Normal</div>
+                    </div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-icon">🌡️</div>
+                    <div class="metric-info">
+                        <h4>Temperature</h4>
+                        <div class="metric-value" id="temperatureMetric">25°C</div>
+                        <div class="metric-status normal" id="tempStatus">Normal</div>
+                    </div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-icon">📶</div>
+                    <div class="metric-info">
+                        <h4>WiFi Signal</h4>
+                        <div class="metric-value" id="wifiMetric">-45 dBm</div>
+                        <div class="metric-status strong" id="wifiStatus">Strong</div>
+                    </div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-icon">💾</div>
+                    <div class="metric-info">
+                        <h4>Memory Usage</h4>
+                        <div class="metric-value" id="memoryMetric">65%</div>
+                        <div class="metric-status normal" id="memoryStatus">Normal</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sensor Status -->
+        <div class="sensor-section">
+            <h3>🎯 Sensor Status</h3>
+            <div class="sensor-grid">
+                <div class="sensor-card">
+                    <h4>TCS3200 RGB Sensor</h4>
+                    <div class="sensor-readings">
+                        <div class="reading">
+                            <span class="reading-label">Red:</span>
+                            <span class="reading-value" id="redReading">--</span>
+                        </div>
+                        <div class="reading">
+                            <span class="reading-label">Green:</span>
+                            <span class="reading-value" id="greenReading">--</span>
+                        </div>
+                        <div class="reading">
+                            <span class="reading-label">Blue:</span>
+                            <span class="reading-value" id="blueReading">--</span>
+                        </div>
+                        <div class="reading">
+                            <span class="reading-label">Clear:</span>
+                            <span class="reading-value" id="clearReading">--</span>
+                        </div>
+                    </div>
+                    <div class="sensor-status active" id="sensorStatus">
+                        <span class="status-dot"></span>
+                        Active
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- System Logs -->
+        <div class="logs-section">
+            <h3>📝 System Logs</h3>
+            <div class="log-container">
+                <div class="log-header">
+                    <span>Recent Events</span>
+                    <button class="btn-clear" onclick="clearLogs()">Clear Logs</button>
+                </div>
+                <div class="log-list" id="systemLogs">
+                    <!-- Logs will be populated here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Control Panel -->
+        <div class="control-section">
+            <h3>🎛️ Device Controls</h3>
+            <div class="control-buttons">
+                <button class="btn-control btn-restart" onclick="restartDevice()">
+                    🔄 Restart Device
+                </button>
+                <button class="btn-control btn-calibrate" onclick="calibrateSensor()">
+                    🎯 Calibrate Sensor
+                </button>
+                <button class="btn-control btn-test" onclick="runDiagnostics()">
+                    🔍 Run Diagnostics
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="device-status.js"></script>
+</body>
+</html>

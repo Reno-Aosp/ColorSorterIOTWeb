@@ -1,12 +1,94 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Color Sorter Dashboard</title>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/sourcecode/main.jsx"></script>
-  </body>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IoT Color Sorting System</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <h1 class="nav-logo">🌈 Color Sorter IoT</h1>
+            <div class="nav-menu">
+                <a href="index.html" class="nav-link active">Dashboard</a>
+                <a href="about.html" class="nav-link">About</a>
+                <a href="device-status.html" class="nav-link">Device Status</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <!-- Real-time Status Bar -->
+        <div class="status-bar">
+            <div class="status-item">
+                <div class="status-indicator" id="connectionStatus"></div>
+                <span id="connectionText">Connecting...</span>
+            </div>
+            <div class="status-item">
+                <span>🔋 Voltage: <strong id="voltageDisplay">0.0V</strong></span>
+            </div>
+            <div class="status-item">
+                <span>📡 Last Update: <strong id="lastUpdate">--:--</strong></span>
+            </div>
+        </div>
+
+        <!-- Current Detection Card -->
+        <div class="current-detection">
+            <h2>🎯 Current Detection</h2>
+            <div class="detection-display">
+                <div class="color-preview" id="currentColorPreview"></div>
+                <div class="detection-info">
+                    <h3 id="currentColorName">Waiting for detection...</h3>
+                    <p>Confidence: <span id="currentConfidence">--</span>%</p>
+                    <p>Device: <span id="currentDevice">--</span></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Statistics Cards -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <h3>Total Detections</h3>
+                <div class="stat-number" id="totalDetections">0</div>
+            </div>
+            <div class="stat-card">
+                <h3>Colors Detected</h3>
+                <div class="stat-number" id="uniqueColors">0</div>
+            </div>
+            <div class="stat-card">
+                <h3>Accuracy Rate</h3>
+                <div class="stat-number" id="accuracyRate">0%</div>
+            </div>
+            <div class="stat-card">
+                <h3>Uptime</h3>
+                <div class="stat-number" id="systemUptime">0h 0m</div>
+            </div>
+        </div>
+
+        <!-- Charts Section -->
+        <div class="charts-section">
+            <div class="chart-container">
+                <h3>Color Distribution</h3>
+                <canvas id="colorChart"></canvas>
+            </div>
+            <div class="chart-container">
+                <h3>Detection Timeline</h3>
+                <canvas id="timelineChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Recent Detections -->
+        <div class="recent-detections">
+            <h3>📋 Recent Detections</h3>
+            <div class="detection-list" id="detectionList">
+                <!-- Detections will be populated here -->
+            </div>
+        </div>
+    </div>
+
+    <script src="dashboard.js"></script>
+</body>
 </html>
