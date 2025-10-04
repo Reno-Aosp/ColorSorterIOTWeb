@@ -1,21 +1,18 @@
 package iotweb.demo.Repository;
 
-import iotweb.demo.DTO.ColorCount;
 import iotweb.demo.Model.DetectionEventModel;
+import iotweb.demo.DTO.ColorCount;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.stereotype.Repository;
+
 import java.util.List;
 
-/**
- * Repository for DetectionEventModel entities.
- * Provides database access and custom queries for color detection events.
- */
+@Repository
 public interface DetectionEventRepository extends JpaRepository<DetectionEventModel, Long> {
     
-    // Get latest 20 events ordered by timestamp descending
-    List<DetectionEventModel> findTop20ByOrderByTsDesc();
+    List<DetectionEventModel> findByDeviceId(String deviceId);
     
-    // Use native SQL query to be 100% sure
-    @Query(value = "SELECT color_name as colorName, COUNT(*) as count FROM detection_event_model GROUP BY color_name", nativeQuery = true)
+    @Query("SELECT new iotweb.demo.DTO.ColorCount(d.colorName, COUNT(d)) FROM DetectionEventModel d GROUP BY d.colorName")
     List<ColorCount> countByColor();
 }

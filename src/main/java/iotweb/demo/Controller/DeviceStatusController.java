@@ -1,4 +1,4 @@
-package iotweb.demo;
+package iotweb.demo.Controller;
 
 import org.springframework.web.bind.annotation.*;
 import java.util.HashMap;
