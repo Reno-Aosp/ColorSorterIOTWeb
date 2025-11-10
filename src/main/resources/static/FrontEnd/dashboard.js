@@ -4,6 +4,8 @@ class ColorSorterDashboard {
         this.statusUrl = 'http://localhost:1000/api/device-status';
         this.colors = []; // Initialize as empty array
         this.startTime = new Date();
+        this.colorChart = null;
+        this.timelineChart = null;
         this.init();
     }
 
@@ -174,10 +176,15 @@ class ColorSorterDashboard {
         const canvas = document.getElementById('colorChart');
         if (!canvas) return;
 
+        // Destroy existing chart before creating new one
+        if (this.colorChart) {
+            this.colorChart.destroy();
+        }
+
         const ctx = canvas.getContext('2d');
         const colorCounts = this.getColorCounts();
         
-        new Chart(ctx, {
+        this.colorChart = new Chart(ctx, {
             type: 'doughnut',
             data: {
                 labels: Object.keys(colorCounts),
@@ -201,10 +208,15 @@ class ColorSorterDashboard {
         const canvas = document.getElementById('timelineChart');
         if (!canvas) return;
 
+        // Destroy existing chart before creating new one
+        if (this.timelineChart) {
+            this.timelineChart.destroy();
+        }
+
         const ctx = canvas.getContext('2d');
         const timelineData = this.getTimelineData();
         
-        new Chart(ctx, {
+        this.timelineChart = new Chart(ctx, {
             type: 'line',
             data: {
                 labels: timelineData.labels,
@@ -240,22 +252,74 @@ class ColorSorterDashboard {
         return counts;
     }
 
-    getColorPalette(colorNames) {
+    // Normalize color; default to white
+    normalizeColorName(name) {
+        const c = (name || '').trim().toLowerCase();
+        return c ? c : 'white';
+    }
+
+    // Ensure palette has yellow and white
+    getColorPalette(names) {
         const palette = {
-            'red': '#FF6B6B',
-            'green': '#4ECDC4',
-            'blue': '#45B7D1',
-            'yellow': '#FFA07A',
-            'orange': '#FF8C42',
-            'purple': '#9B59B6',
-            'pink': '#FF69B4',
-            'cyan': '#00CED1',
-            'white': '#F8F9FA',
-            'black': '#343A40',
-            'gray': '#6C757D'
+            red:    '#FF6B6B',
+            green:  '#4ECDC4',
+            blue:   '#45B7D1',
+            yellow: '#FFD700',  // ✅ Already added
+            white:  '#FFFFFF',  // ✅ Already added
+            orange: '#FF8C42',
+            purple: '#9B59B6',
+            pink:   '#FF69B4',
+            cyan:   '#00CED1',
+            black:  '#343A40',
+            gray:   '#6C757D'
         };
-        
-        return colorNames.map(name => palette[name] || '#95A5A6');
+        return names.map(n => palette[n] || '#95A5A6');
+    }
+
+    startRealTimeUpdates() {
+        setInterval(async () => {
+            await this.loadData();
+        }, 3000);
+    }
+
+    setCurrentColor(colorName) {
+        const safe = this.normalizeColorName(colorName);
+        this.currentColor = safe;
+
+        const colorPreview = document.getElementById('currentColorPreview');
+        const colorNameElement = document.getElementById('currentColorName');
+        const confidence = document.getElementById('currentConfidence');
+        const device = document.getElementById('currentDevice');
+
+        if (colorPreview) colorPreview.style.backgroundColor = `rgb(${this.currentColor.r}, ${this.currentColor.g}, ${this.currentColor.b})`;
+        if (colorNameElement) colorNameElement.textContent = this.currentColor.colorName.toUpperCase();
+        if (confidence) confidence.textContent = Math.round(this.currentColor.confidence * 100);
+        if (device) device.textContent = this.currentColor.deviceId;
+    }
+
+    async postDetection(event) {
+        const color = this.normalizeColorName(event?.color || this.currentColor);
+        if (color === 'white' || color === 'none' || color === 'no_detection') {
+            return; // do not send to backend
+        }
+
+        try {
+            await fetch('/api/events', {
+                method: 'POST',
+                body: JSON.stringify(event),
+                headers: {'Content-Type':'application/json'}
+            });
+        } catch (error) {
+            console.error('Error posting detection:', error);
+        }
+    }
+
+    // If you build charts from counts, ensure yellow shows up
+    buildChartData(countsByColor) {
+        const colors = ['red','green','blue','yellow']; // include yellow
+        const data = colors.map(c => countsByColor[c] || 0);
+        const bg  = this.getColorPalette(colors);
+        return { labels: colors, datasets:[{ data, backgroundColor: bg }] };
     }
 
     getTimelineData() {
@@ -305,11 +369,45 @@ class ColorSorterDashboard {
             </div>
         `).join('');
     }
+}
 
-    startRealTimeUpdates() {
-        setInterval(async () => {
-            await this.loadData();
-        }, 3000);
+// Global function to clear history
+async function clearHistory() {
+    if (!confirm('⚠️ Are you sure you want to delete ALL detection history?\n\nThis action cannot be undone!')) {
+        return;
+    }
+
+    // Show loading state
+    const btn = event.target;
+    const originalText = btn.innerHTML;
+    btn.innerHTML = '⏳ Deleting...';
+    btn.disabled = true;
+
+    try {
+        const response = await fetch('http://localhost:1000/api/events', {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (response.ok) {
+            const result = await response.text();
+            console.log('Delete result:', result);
+            alert('✅ ' + result);
+            location.reload(); // Reload page to refresh data
+        } else {
+            const errorText = await response.text();
+            console.error('Delete failed:', errorText);
+            alert('❌ Failed to clear history. Status: ' + response.status + '\n' + errorText);
+            btn.innerHTML = originalText;
+            btn.disabled = false;
+        }
+    } catch (error) {
+        console.error('Error clearing history:', error);
+        alert('❌ Error: ' + error.message + '\n\nMake sure the backend server is running on port 1000.');
+        btn.innerHTML = originalText;
+        btn.disabled = false;
     }
 }
 
@@ -317,3 +415,14 @@ class ColorSorterDashboard {
 document.addEventListener('DOMContentLoaded', () => {
     new ColorSorterDashboard();
 });
+
+// Assuming you have a function to update the chart
+function updateChart(data) {
+    myChart.data.datasets[0].data = [
+        data.sensorReadings.red,
+        data.sensorReadings.green,
+        data.sensorReadings.blue,
+        data.sensorReadings.yellow // new color
+    ];
+    myChart.update();
+}
