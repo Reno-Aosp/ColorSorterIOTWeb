@@ -87,16 +87,35 @@ class ColorSorterDashboard {
 
     async updateSystemStatus() {
         try {
-            const deviceData = {
-                voltage: (3.2 + Math.random() * 0.2).toFixed(1),
-                temperature: (24 + Math.random() * 4).toFixed(1),
-                wifiSignal: -40 - Math.random() * 20,
-                memoryUsage: (60 + Math.random() * 20).toFixed(0)
-            };
-
-            const voltageDisplay = document.getElementById('voltageDisplay');
-            if (voltageDisplay) {
-                voltageDisplay.textContent = deviceData.voltage + 'V';
+            // Fetch REAL data from ESP32
+            const response = await fetch(this.statusUrl); // Uses 'http://localhost:1000/api/device-status'
+            
+            if (response.ok) {
+                const deviceData = await response.json();
+                
+                // Update voltage
+                const voltageDisplay = document.getElementById('voltageDisplay');
+                if (voltageDisplay && deviceData.voltage) {
+                    voltageDisplay.textContent = deviceData.voltage + 'V';
+                }
+                
+                // Update temperature
+                const tempDisplay = document.getElementById('temperatureDisplay');
+                if (tempDisplay && deviceData.temperature) {
+                    tempDisplay.textContent = deviceData.temperature + '°C';
+                }
+                
+                // Update WiFi signal
+                const wifiDisplay = document.getElementById('wifiDisplay');
+                if (wifiDisplay && deviceData.wifiSignal) {
+                    wifiDisplay.textContent = deviceData.wifiSignal + ' dBm';
+                }
+                
+                // Update memory
+                const memoryDisplay = document.getElementById('memoryDisplay');
+                if (memoryDisplay && deviceData.memoryUsage) {
+                    memoryDisplay.textContent = deviceData.memoryUsage + ' KB';
+                }
             }
             
             // Update uptime
@@ -258,20 +277,13 @@ class ColorSorterDashboard {
         return c ? c : 'white';
     }
 
-    // Ensure palette has yellow and white
+    // Only allow red, green, yellow, and white (default)
     getColorPalette(names) {
         const palette = {
             red:    '#FF6B6B',
             green:  '#4ECDC4',
-            blue:   '#45B7D1',
-            yellow: '#FFD700',  // ✅ Already added
-            white:  '#FFFFFF',  // ✅ Already added
-            orange: '#FF8C42',
-            purple: '#9B59B6',
-            pink:   '#FF69B4',
-            cyan:   '#00CED1',
-            black:  '#343A40',
-            gray:   '#6C757D'
+            yellow: '#FFD700',
+            white:  '#FFFFFF'
         };
         return names.map(n => palette[n] || '#95A5A6');
     }
@@ -282,8 +294,9 @@ class ColorSorterDashboard {
         }, 3000);
     }
 
+    // Update this method to default to white
     setCurrentColor(colorName) {
-        const safe = this.normalizeColorName(colorName);
+        const safe = (colorName || '').trim().toLowerCase() || 'white'; // Force default to white
         this.currentColor = safe;
 
         const colorPreview = document.getElementById('currentColorPreview');
@@ -295,6 +308,16 @@ class ColorSorterDashboard {
         if (colorNameElement) colorNameElement.textContent = this.currentColor.colorName.toUpperCase();
         if (confidence) confidence.textContent = Math.round(this.currentColor.confidence * 100);
         if (device) device.textContent = this.currentColor.deviceId;
+    }
+
+    // Or wherever you handle color detection, add this check
+    handleDetectionResult(result) {
+        let color = result?.color || 'white'; // Default to white if no color
+        if (!color || color.trim().toLowerCase() === 'none') {
+            color = 'white';
+        }
+        this.setCurrentColor(color);
+        // ...existing code...
     }
 
     async postDetection(event) {
@@ -316,7 +339,7 @@ class ColorSorterDashboard {
 
     // If you build charts from counts, ensure yellow shows up
     buildChartData(countsByColor) {
-        const colors = ['red','green','blue','yellow']; // include yellow
+        const colors = ['red','green','yellow']; // only red, green, yellow
         const data = colors.map(c => countsByColor[c] || 0);
         const bg  = this.getColorPalette(colors);
         return { labels: colors, datasets:[{ data, backgroundColor: bg }] };

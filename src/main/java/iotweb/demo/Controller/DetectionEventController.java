@@ -71,7 +71,15 @@ public class DetectionEventController {
                 return ResponseEntity.noContent().build(); // 204 No Content
             }
             
-            // Yellow and other colors are saved normally
+            // Only allow red, green, yellow
+            String normalizedColor = color.trim().toLowerCase();
+            if (!normalizedColor.equals("red") && !normalizedColor.equals("green") && !normalizedColor.equals("yellow")) {
+                System.out.println("❌ Rejected color: " + color + " (only red, green, yellow allowed)");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body("Only red, green, and yellow colors are allowed");
+            }
+            
+            // Save allowed colors
             event.setColorName(color);
             event.setTimestamp(LocalDateTime.now());
             DetectionEventModel saved = repository.save(event);
